@@ -2,6 +2,20 @@
 include_once('db.php');
 include_once('functions.php');
 define('GAME_TOTAL_WASPS', 14);
+define('WASPS', [
+    "Queen" => [
+        "amount" => 1,
+        "points" => 80
+    ],
+    "Worker" => [
+        "amount" => 5,
+        "points" => 68
+    ],
+    "Drone" => [
+        "amount" => 8,
+        "points" => 60
+    ]
+]);
 session_start();
 $action = null;
 $msg = null;
@@ -24,8 +38,9 @@ if ($action == 'start_game') {
     $msg = 'New game started, ' . count($randWasps) . ' wasps inserted into the hive';
     cancelExistingGame();
     startNewGame();
+    populateWaspNest();
     // Automatically reload the pages elements
-    //redirect($msg);
+    redirect($msg);
     // End of game setup
 }
 else if ($action == 'hitting') {
@@ -62,10 +77,15 @@ else if ($action == 'hitting') {
         $msg = 'There are no wasps left in the hive, you\'ve only gone and killed them all!';
     }
     // Update the database tables to have up to date gameplay values
+    updateWaspDetails($waspHit['wasp_points'], $waspHit['wasp_id']);
     updateGameDetails($game);
-    //redirect($msg);
+	header("Location: wasp-game.php");
+    die();
+if (isset($_SESSION['msg'])) {
+    $msg = $_SESSION['msg'];
+    unset($_SESSION['msg']);
 }
-dd ($waspHit);
+}
 ?>
 <!DOCTYPE html>
 <html>

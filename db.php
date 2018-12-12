@@ -35,6 +35,16 @@ function getWaspData($game_id) {
     $randWasps = $waspStmt->fetchAll(PDO::FETCH_ASSOC);
     return $randWasps;
 }
+function populateWaspNest() {
+    global $conn;
+    $freshWaspSql = "INSERT INTO wasps (wasp_type, wasp_points)
+    VALUES (:wasp_type, :wasp_points)";
+    $freshWaspStmt = $conn->prepare($freshWaspSql);
+    $freshWaspStmt->execute([
+        ':wasp_type' => WASPS['wasp_type'],
+        ':wasp_points' => WASPS['wasp_points']
+    ]);
+}
 function getKilledWaspData($game_id) {
     global $conn;
     $killedWaspSql = "SELECT k.killed_wasp_id, k.wasp_id, w.wasp_type, w.wasp_points
@@ -85,5 +95,16 @@ function updateGameDetails($game) {
         ':game_status' => $game['game_status'],
         ':game_score' => $game['game_score'],
         ':game_total_wasps' => $game['game_total_wasps']
+    ]);
+}
+function updateWaspDetails($wasp_hit, $wasp_id) {
+    global $conn;
+    $updateWaspSql = 'UPDATE wasps
+    SET wasp_points = :wasp_points
+    WHERE wasp_id = :wasp_id';
+    $updateWaspStmt = $conn->prepare($updateWaspSql);
+    $updateWaspStmt->execute([
+        ':wasp_points' => $wasp_hit,
+        ':wasp_id' => $wasp_id
     ]);
 }
