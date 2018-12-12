@@ -12,23 +12,20 @@ if (isset($_POST['action'])) {
     // If an action is set, the post value of that action is assigned to a variable called action
     $action = $_POST['action'];
 }
-if (!isset($_POST['action'])) {
-    // If an action is not set, the game has not been started, that is then reflected in the game status variable
+if (!isset($game['game_status'])) {
+    // If the game status is not set, the game has not been started, that is then reflected in the game status variable
     $game['game_status'] = 'not started';
-}
-if ($action == 'start new game') {
-    $action = 'start_game';
 }
 if ($game['game_status'] == 'finished') {
     $msg = 'The game has been finished, please start new game if you wish to play again';
 }
-else if ($action == 'start_game') {
+if ($action == 'start_game') {
     // Start game setup
     $msg = 'New game started, ' . count($randWasps) . ' wasps inserted into the hive';
     cancelExistingGame();
     startNewGame();
     // Automatically reload the pages elements
-    redirect($msg);
+    //redirect($msg);
     // End of game setup
 }
 else if ($action == 'hitting') {
@@ -37,27 +34,28 @@ else if ($action == 'hitting') {
     // Pick a wasp out of the randWasps array at random, this will be the was classed as 'hit'
     $waspRandId = array_rand($randWasps, 1);
     $waspHit = $randWasps[$waspRandId];
-    $msg = $waspHit['type'] . ' hit!';
+    $msg = $waspHit['wasp_type'] . ' hit!';
     // Now comes several 'if' statements to decipher how many points the user gains and how many points the wasp loses
-    if ($waspHit['type'] == 'Queen') {
+    if ($waspHit['wasp_type'] == 'Queen') {
         // Take away 7 hit points from the queen
-        $waspHit['points'] =-7;
-        $game['game_score'] =+7;
+        $waspHit['wasp_points'] -=7;
+        $game['game_score'] +=7;
     }
-    else if ($waspHit['type'] == 'Worker') {
+    else if ($waspHit['wasp_type'] == 'Worker') {
         //Take away 10 points from the worker
-        $waspHit['points'] =-10;
-        $game['game_score'] =+10;
+        $waspHit['wasp_points'] -=10;
+        $game['game_score'] +=10;
     }
-    else if ($waspHit['type'] == 'Drone') {
+    else if ($waspHit['wasp_type'] == 'Drone') {
         //Take away 12 points from the worker
-        $waspHit['points'] =- 12;
-        $game['game_score'] =+7;
+        $waspHit['wasp_points'] -=12;
+        $game['game_score'] +=7;
     }
-    if ($waspHit['points'] <= 0) {
+    if ($waspHit['wasp_points'] <= 0) {
         // When a wasp is hit and they have 0 points they should now be added to the killed wasps table
         killWasp($waspHit['wasp_id'], $game['game_id']); 
         $game['game_total_wasps']--;
+        $msg = 'A ' . $waspHit['wasp_type'] . ' is now dead!';
     }
     if ($game['game_total_wasps'] === 0 ) {
         $game['game_status'] = 'finished';
@@ -65,8 +63,9 @@ else if ($action == 'hitting') {
     }
     // Update the database tables to have up to date gameplay values
     updateGameDetails($game);
-    redirect($msg);
+    //redirect($msg);
 }
+dd ($waspHit);
 ?>
 <!DOCTYPE html>
 <html>
@@ -78,6 +77,46 @@ else if ($action == 'hitting') {
     <link rel="stylesheet" type="text/css" media="screen" href="wasp-styles.css" />
 </head>
 <body>
-    
+    <h1>
+    <?= $msg; ?>
+    </h1>
+    <main>
+    <h1>Wasp nest!</h1>
+    <ul>
+    <?php
+    foreach ($randWasps as $wasp) {
+        ?>
+        <li>
+        <?= $wasp['wasp_type'] . ':' . $wasp['wasp_points']; ?>
+        <br>
+        </li>
+        <?php
+    }
+    ?>
+    </ul>
+    <h2>Game Stats</h2>
+    <p>
+        <strong>Wasps remaining: </strong>
+        <?= $game['game_total_wasps']; ?>
+    </p>
+    <p>
+        <strong>Game score: </strong>
+        <?= $game['game_score']; ?>
+    </p>
+    <form method="POST" action="<?= $_SERVER['PHP_SELF']; ?>">
+        <?php
+        if ($game['game_status'] == 'started') {
+            ?>
+                <button type="submit" name="action" value="hitting">Hit Wasp!</button>
+            <?php
+        }
+        else {
+            ?>
+                <button type="submit" name="action" value="start_game">Start New Game</button>
+            <?php
+        }
+            ?>
+    </form>
+    </main>
 </body>
 </html>

@@ -37,7 +37,7 @@ function getWaspData($game_id) {
 }
 function getKilledWaspData($game_id) {
     global $conn;
-    $killedWaspSql = "SELECT K.killed_wasp_id, k.wasp_id, w.wasp_type, w.wasp_points
+    $killedWaspSql = "SELECT k.killed_wasp_id, k.wasp_id, w.wasp_type, w.wasp_points
     FROM killed_wasps AS k
     JOIN wasps AS w
     ON k.wasp_id = w.wasp_id
@@ -58,7 +58,7 @@ function cancelExistingGame() {
 function startNewGame() {
     global $conn;
     $startNewGameSql = "INSERT INTO game (game_status, game_score, game_total_wasps)
-    VALUES (:'started', 0, :GAME_TOTAL_WASPS)";
+    VALUES ('started', 0, :GAME_TOTAL_WASPS)";
     $startNewGameStmt = $conn->prepare($startNewGameSql);
     $startNewGameStmt->execute([
         ':GAME_TOTAL_WASPS' => GAME_TOTAL_WASPS
@@ -66,7 +66,7 @@ function startNewGame() {
 }
 function killWasp($wasp_id, $game_id) {
     global $conn;
-    $addKilledWaspSql = "INSERT INTO killed_wasp (wasp_id, game_id)
+    $addKilledWaspSql = "INSERT INTO killed_wasps (wasp_id, game_id)
         VALUES (:wasp_id, :game_id)";
     $addKilledWaspStmt = $conn->prepare($addKilledWaspSql);
     $addKilledWaspStmt->execute([
