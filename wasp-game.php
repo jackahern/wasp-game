@@ -2,20 +2,6 @@
 include_once('db.php');
 include_once('functions.php');
 define('GAME_TOTAL_WASPS', 14);
-define('WASPS', [
-    "Queen" => [
-        "amount" => 1,
-        "points" => 80
-    ],
-    "Worker" => [
-        "amount" => 5,
-        "points" => 68
-    ],
-    "Drone" => [
-        "amount" => 8,
-        "points" => 60
-    ]
-]);
 session_start();
 $action = null;
 $msg = null;
@@ -40,7 +26,7 @@ if ($action == 'start_game') {
     startNewGame();
     populateWaspNest();
     // Automatically reload the pages elements
-    redirect($msg);
+    //redirect($msg);
     // End of game setup
 }
 else if ($action == 'hitting') {
@@ -81,10 +67,10 @@ else if ($action == 'hitting') {
     updateGameDetails($game);
 	header("Location: wasp-game.php");
     die();
-if (isset($_SESSION['msg'])) {
-    $msg = $_SESSION['msg'];
-    unset($_SESSION['msg']);
-}
+// if (isset($_SESSION['msg'])) {
+//     $msg = $_SESSION['msg'];
+//     unset($_SESSION['msg']);
+// }
 }
 ?>
 <!DOCTYPE html>
@@ -118,10 +104,6 @@ if (isset($_SESSION['msg'])) {
     <p>
         <strong>Wasps remaining: </strong>
         <?= $game['game_total_wasps']; ?>
-    </p>
-    <p>
-        <strong>Game score: </strong>
-        <?= $game['game_score']; ?>
     </p>
     <form method="POST" action="<?= $_SERVER['PHP_SELF']; ?>">
         <?php

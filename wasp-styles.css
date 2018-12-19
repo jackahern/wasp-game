@@ -1,0 +1,42 @@
+body {
+    background-image: url('beehive-bg.svg');
+    background-size: cover;
+    padding: 5px;
+}
+h1 {
+    font-size: 50px;
+    color: white;
+    -webkit-text-stroke: 1px yellow;
+}
+h2 {
+    font-size: 42px;
+    color: white;
+    -webkit-text-stroke: 0.5px yellow;
+}
+p {
+    font-size: 35px;
+    color: white;
+    -webkit-text-stroke: 0.5px red;
+}
+li {
+    border-radius: 50px;
+    background-color: white;
+	box-shadow: 10px 10px 5px -8px rgba(0,0,0,0.75);
+    display: inline-block;
+    padding: 10px;
+}
+button {
+    border-radius: 30px;
+    width: 150px;
+    color: white;
+    background-color: black;
+    font-size: 26px;
+    font-weight: 600;
+    padding: 10px;
+    transition: all .0.5s ease-in-out;
+}
+button:hover {
+    transform: scale(1.1);
+	box-shadow: 10px 10px 5px -8px rgba(0,0,0,0.75);
+	transition-duration: 0.5s;	
+}

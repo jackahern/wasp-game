@@ -37,13 +37,40 @@ function getWaspData($game_id) {
 }
 function populateWaspNest() {
     global $conn;
-    $freshWaspSql = "INSERT INTO wasps (wasp_type, wasp_points)
-    VALUES (:wasp_type, :wasp_points)";
-    $freshWaspStmt = $conn->prepare($freshWaspSql);
-    $freshWaspStmt->execute([
-        ':wasp_type' => WASPS['wasp_type'],
-        ':wasp_points' => WASPS['wasp_points']
-    ]);
+    $conn->prepare("TRUNCATE TABLE wasps")->execute();
+    $wasps = [
+        "Queen" => [
+            "amount" => 1,
+            "points" => 80
+        ],
+        "Worker" => [
+            "amount" => 5,
+            "points" => 68
+        ],
+        "Drone" => [
+            "amount" => 8,
+            "points" => 60
+        ]
+    ];
+    $randWasps = [];
+    foreach ($wasps as $wasp => $waspStats) {
+        for ($i=0; $i < $waspStats['amount']; $i++) {
+            $randWasps[] = [
+                "type" => $wasp,
+                "points" => $waspStats['points']
+            ];
+        }
+    }
+    shuffle($randWasps);
+    foreach ($randWasps as $waspStats) {
+        $sql = "INSERT INTO wasps (wasp_type, wasp_points)
+        VALUES (:wasp_type, :wasp_points)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':wasp_type' => $waspStats['type'],
+            ':wasp_points' => $waspStats['points']
+        ]);
+    }  
 }
 function getKilledWaspData($game_id) {
     global $conn;
