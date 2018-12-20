@@ -50,7 +50,7 @@ else if ($action == 'hitting') {
     else if ($waspHit['wasp_type'] == 'Drone') {
         //Take away 12 points from the worker
         $waspHit['wasp_points'] -=12;
-        $game['game_score'] +=7;
+        $game['game_score'] +=12;
     }
     if ($waspHit['wasp_points'] <= 0) {
         // When a wasp is hit and they have 0 points they should now be added to the killed wasps table
